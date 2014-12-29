@@ -1,0 +1,20 @@
+<script type="text/javascript" src="../d3/lib/d3.v3.min.js"></script>
+
+<script>
+    var aa = [10,1,2,3,4,5,-3] ;
+    var bb = aa.map(function(n){
+        return n*2 ;
+    }) ;
+    console.log(bb) ;
+
+    var parseDate = d3.time.format("%Y-%m-%d-%b") ;
+    //1416908460
+    var d = new Date(1416908460*1000) ;
+    console.log(d) ;
+    console.log(parseDate(d)) ;
+
+    cc = d3.extent(aa , function(d){return d}) ;
+    console.log("cc=" , cc) ;
+
+
+</script>

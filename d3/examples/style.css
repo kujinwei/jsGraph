@@ -1,0 +1,11 @@
+.dot {
+    background-color: #00ff26;
+}
+
+.bounding-rect {
+    border: 1px solid green;
+}
+
+.the-group {
+    border: 1px solid #ff00ff;
+}

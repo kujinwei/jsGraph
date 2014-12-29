@@ -1,0 +1,26 @@
+<!--works in Firefox, but Chrome/Opera has a bug on feMorphology, but it should be possible to work around that by using other filter primitives-->
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+    <defs>
+        <filter id="border" x="-5%" y="-5%" width="110%" height="110%">
+            <feFlood flood-color="black" result="outer"/>
+            <feMorphology operator="erode" radius="2" in="outer" result="inner"/>
+            <feComposite in="inner" in2="outer" operator="xor"/>
+            <feComposite in2="SourceGraphic"/>
+        </filter>
+    </defs>
+    <g filter="url(#border)">
+        <circle cx="50" cy="60" r="20" fill="yellow"/>
+        <rect x="80" y="80" width="200" height="100" fill="blue"/>
+    </g>
+</svg>
+
+
+
+
+<!--works in Chrome and Opera-->
+<svg xmlns="http://www.w3.org/2000/svg" width="500px" height="500px">
+    <g style="outline: thick solid black; outline-offset: 10px;">
+        <circle cx="50" cy="60" r="20" fill="yellow"/>
+        <rect x="80" y="80" width="200" height="100" fill="blue"/>
+    </g>
+</svg>

@@ -1,0 +1,40 @@
+
+<script type="text/javascript" src="../lib/d3.v2.js"></script>
+<div id="chart1" class="chart"></div>
+
+<script>
+
+
+
+//    document.write('JavaScript Version: ' + get_js_version());
+    var datacount = 100 ;
+    var points = d3.range(datacount).map(function (i) {
+        return { x: i+100 , y: Math.random() * 100 };
+    });
+//    console.log(points) ;
+
+    var svgContainer = d3.select("#chart1").append("svg")
+        .attr("width",600)
+        .attr("height",500);
+
+    var circle = svgContainer.selectAll("circle")
+        .data(points, function (d) {
+//                console.log(d) ;
+            return d;
+        });
+
+    circle.enter().append("circle")
+            .attr('fill' , 'none')
+            .attr('stroke' , 'red')
+        .attr("cx", function (d) {
+            return d.x;
+        })
+        .attr("cy", function (d) {
+                console.log("call me") ;
+            return d.y;
+        })
+        .attr("r", 10.0);
+//        .style("cursor", "ns-resize")
+//        .on("mousedown.drag", self.datapoint_drag())
+//        .on("touchstart.drag", self.datapoint_drag());
+</script>

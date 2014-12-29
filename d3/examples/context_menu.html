@@ -1,0 +1,43 @@
+<script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+
+<div id="action_div" style="display: none">
+    Menu item1
+
+
+</div>
+<div id="NetworkDiagram">
+
+</div>
+<script>
+
+    var svg = d3.select("#NetworkDiagram").append("svg")
+            .attr("border",1);
+
+    svg.append("rect")
+            .attr("x" , 10)
+            .attr("y" , 10)
+            .attr("height",100)
+            .attr("width", 100)
+            .style("stroke", "black")
+            .style("fill", "none")
+            .style("stroke-width", 1)
+            .on('contextmenu', function(data, index) {
+                console.log("right click") ;
+                if (d3.event.pageX || d3.event.pageY) {
+                    var x = d3.event.pageX;
+                    var y = d3.event.pageY;
+                } else if (d3.event.clientX || d3.event.clientY) {
+                    var x = d3.event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                    var y = d3.event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+                }
+
+                d3.select('#action_div')
+                        .style('position', 'absolute')
+                        .style('left', x + 'px')
+                        .style('top', y + 'px')
+                        .style('display', 'block');
+
+                d3.event.preventDefault();
+            }) ;
+
+</script>

@@ -1,0 +1,29 @@
+<script type="text/javascript" src="../lib/date.js"></script>
+<script>
+    function format(d) {
+        return d.toString('yyyy-MM-dd') ;
+    }
+
+    function dateOffset(baseDate , offset) {
+        //dd = new Date() ;
+        //dd.setDate(baseDate.getDate() + offset) ;
+        //alert(format(dd)) ;
+
+        dd = baseDate.addDays(offset) ;
+        //alert(format(baseDate) + ' ' + format(dd)) ;
+
+        return format(dd) ;
+    }
+
+    var toDate = new Date() ;
+    //console.log(new Date().addDays(-3).getTimezoneOffset()) ;
+
+    console.log(format(new Date().addHours(-122))) ;
+
+    console.log(toDate.constructor) ;
+    console.log("xxx".constructor) ;
+    console.log(toDate.getTime().constructor) ;
+
+
+
+</script>

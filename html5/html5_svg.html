@@ -1,0 +1,86 @@
+<html>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+    <defs>
+        <filter id="border" x="-5%" y="-5%" width="110%" height="110%">
+            <feFlood flood-color="black" result="outer"/>
+            <feMorphology operator="erode" radius="2" in="outer" result="inner"/>
+            <feComposite in="inner" in2="outer" operator="xor"/>
+            <feComposite in2="SourceGraphic"/>
+        </filter>
+    </defs>
+    <g filter="url(#border)">
+        <circle cx="50" cy="60" r="20" fill="yellow"/>
+        <rect x="80" y="80" width="200" height="100" fill="blue"/>
+    </g>
+</svg>
+
+
+
+<svg height="210" width="500">
+  <line x1="0" y1="0" x2="200" y2="200" style="stroke:rgb(255,0,0);stroke-width:2" />
+  Sorry, your browser does not support inline SVG.
+</svg>
+
+<svg height="30" width="200">
+  <text x="0" y="15" fill="red">I love SVG!</text>
+  Sorry, your browser does not support inline SVG.
+</svg>
+
+<svg height="30" width="200" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <a xlink:href="http://www.w3schools.com/svg/" target="_blank">
+    <text x="0" y="15" fill="red">I love SVG!</text>
+  </a>
+  Sorry, your browser does not support inline SVG.
+</svg>
+
+
+<svg height="80" width="300">
+  <g fill="none">
+    <path stroke="red" d="M5 20 l215 0" />
+    <path stroke="black" d="M5 40 l215 0" />
+    <path stroke="blue" d="M5 60 l215 0" />
+  </g>
+  Sorry, your browser does not support inline SVG.
+</svg>
+
+<svg width="50" height="50">
+    <rect x="0" y="0" width="50" height="50" fill="green" />
+</svg>
+
+
+<svg height="100" width="100">
+  <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
+  Sorry, your browser does not support inline SVG.  
+</svg> 
+
+<svg width="400" height="110">
+  <rect width="300" height="100" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)">
+  Sorry, your browser does not support inline SVG.  
+</svg>
+
+
+<svg width="400" height="180">
+  <rect x="50" y="20" width="150" height="150" style="fill:blue;stroke:pink;stroke-width:5;opacity:0.5">
+  Sorry, your browser does not support inline SVG.  
+</svg>
+
+
+<svg height="140" width="500">
+  <ellipse cx="200" cy="80" rx="100" ry="50" style="fill:yellow;stroke:purple;stroke-width:2" />
+  Sorry, your browser does not support inline SVG.  
+</svg>
+
+<svg height="210" width="500">
+  <polygon points="200,10 250,190 160,210" style="fill:lime;stroke:purple;stroke-width:1" />
+  Sorry, your browser does not support inline SVG.
+</svg>
+
+<svg height="250" width="500">
+  <polygon points="220,10 300,210 170,250 123,234" style="fill:lime;stroke:purple;stroke-width:1" />
+  Sorry, your browser does not support inline SVG.
+</svg>
+
+
+	
+</html>	

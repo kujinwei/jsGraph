@@ -1,0 +1,165 @@
+<style>
+    .axis {
+        shape-rendering: crispEdges;
+    }
+
+    .x.axis line {
+        stroke: black;
+    }
+
+    .x.axis .minor {
+        stroke-opacity: .5;
+    }
+
+    .x.axis path {
+        display: none;
+    }
+
+    .canvas {
+        border: 1px solid black;
+    }
+
+    .task {
+    }
+
+</style>
+<script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+<body>
+<svg class="canvas"></svg>
+
+<script>
+
+    var team_member_ids = [
+        1,
+        2,
+        3,
+        4,
+        5
+    ];
+
+    var data = [
+        { owner: 1, color: 'blue', start: new Date('1-5-2014'), end: new Date('1-6-2014') },
+        { owner: 2, color: 'red', start: new Date('1-10-2014'), end: new Date('1-12-2014') },
+        { owner: 4, color: 'green', start: new Date('1-15-2014'), end: new Date('1-15-2014 12:00') },
+        { owner: 4, color: 'yellow', start: new Date('1-15-2014 12:00'), end: new Date('1-16-2014') },
+        { owner: 5, color: 'orange', start: new Date('2-5-2014'), end: new Date('2-12-2014') }
+    ];
+
+    var later_data = [
+        { owner: 2, color: 'red', start: new Date('2-10-2014'), end: new Date('2-11-2014') },
+        { owner: 3, color: 'yellow', start: new Date('2-10-2014'), end: new Date('2-13-2014') },
+        { owner: 4, color: 'blue', start: new Date('2-11-2014'), end: new Date('2-15-2014') }
+    ];
+
+    var width = 900,
+            height = 500,
+            panX = 0;
+
+    var xScale = d3.time.scale().domain([new Date('1-1-2014'), new Date('1-31-2014')]).range([0, width]),
+            yScale = d3.scale.ordinal().domain(team_member_ids).rangeRoundBands([0, height], 0, 0),
+            xAxis = d3.svg.axis().scale(xScale).tickSize(-480).orient('top');
+
+    var zoom = d3.behavior.zoom().scaleExtent([.025, 1]).x(xScale)
+            .on('zoom', function () {
+                render();
+            })
+            .on('zoomend', function () {
+                if (xScale.domain()[1] > d3.time.day.offset(d3.max(data.map(function (d) {
+                    return d.end;
+                })), 4)) {
+                    data = data.concat(later_data);
+                    render();
+                }
+            });
+
+    var drag = d3.behavior.drag()
+            .on('dragstart', function () {
+                d3.event.sourceEvent.stopPropagation();
+            })
+            .on('drag', function (d) {
+                var x = d3.event.x, y = d3.event.y;
+
+                var duration = d.end - d.start;
+                d.start = d3.time.day.round(xScale.invert(x));
+                d.end = d3.time.second.offset(d.start, duration / 1000);
+
+                var y_list = yScale.range().slice()
+                y_list.push(y)
+                y_list.sort(function (a, b) {
+                    return a - b;
+                });
+                var idx = y_list.indexOf(y);
+
+                var prev = null, next = null, prev_dist = null, next_dist = null;
+                if (idx > 0) {
+                    prev = y_list[idx - 1];
+                    prev_dist = y - prev;
+                }
+                if (idx < y_list.length - 1) {
+                    next = y_list[idx + 1];
+                    next_dist = next - y;
+                }
+
+                var closest;
+                if (prev === null) {
+                    closest = next;
+                } else if (next === null) {
+                    closest = prev;
+                } else {
+                    closest = prev_dist < next_dist ? prev : next;
+                }
+
+                d.owner = yScale.domain()[yScale.range().indexOf(closest)];
+
+                render();
+            });
+
+    var canvas = d3.select('.canvas')
+            .attr('height', height)
+            .attr('width', width)
+            .call(zoom);
+
+    var xAxisSelection = canvas.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0, 20)');
+
+    var canvasGroup = canvas.append('g')
+            .attr('class', 'canvasGroup')
+            .attr('transform', 'translate(0,30)');
+
+    var render = function () {
+        xAxisSelection.call(xAxis);
+
+        var tasks = canvasGroup.selectAll('.task').data(data);
+
+        tasks.enter()
+                .append('svg:rect')
+                .call(drag)
+                .attr('class', 'task')
+                .attr('opacity', 0)
+                .transition()
+                .duration(500)
+                .attr('opacity', 0.75);
+
+        tasks
+                .attr('fill', function (d) {
+                    return d.color;
+                })
+                .attr('x', function (d) {
+                    var startDate = d3.time.day.floor(d.start);
+                    return xScale(startDate);
+                })
+                .attr('y', function (d) {
+                    return yScale(d.owner);
+                })
+                .attr('height', 25)
+                .attr('width', function (d) {
+                    var startDate = d3.time.day.floor(d.start);
+                    var endDate = d3.time.day.ceil(d.end);
+                    return xScale(endDate) - xScale(startDate);
+                });
+    };
+
+    render();
+</script>
+</body>

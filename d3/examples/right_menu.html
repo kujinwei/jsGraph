@@ -1,0 +1,241 @@
+<style>
+    /* Styles for our labels */
+    .label {
+        font-family: arial, helvetica, 'sans-serif';
+        font-size: 24px;
+        text-anchor: middle;
+        alignment-baseline: text-before-edge;
+    }
+    .canvas {
+        position: absolute;
+    }
+    .popup {
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-color: #fff;
+        width: 200px;
+        border: 1px #ccc solid;
+        border-radius: 6px;
+        box-shadow: #333 2px 2px 4px;
+        padding: 8px;
+        font-family: arial, helvetica, sans-serif;
+    }
+    .popup h2 {
+        margin: 0 0 1rem 0;
+    }
+    /* Assign styles to bars based on division labels */
+    .com {
+        fill: goldenrod;
+    }
+    .sci {
+        fill: royalblue;
+    }
+    .ops {
+        fill: crimson;
+    }
+    svg {
+        border: 1px #000 solid;
+    }
+    #backdrop {
+        fill: oldlace;
+    }
+</style>
+<script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+
+<h1>Over Here, Captain</h1>
+
+<p>Casualties by division in <cite>Star Trek</cite>'s original series.</p>
+<div class="canvas">
+    <svg>
+        <rect id="backdrop" />
+        <g id="chart">
+            <g id="art" />
+            <g id="labels" /></g>
+    </svg>
+</div>
+<p>Data from <a href="http://en.memory-alpha.org/wiki/Portal:Main">Memory Alpha</a>, compiled by
+    <a href="http://preview.tinyurl.com/af7ur8q">Matthew Barsalou</a>.
+
+<script>
+
+    // Our dataset, based on data from
+    // http://en.memory-alpha.org/wiki/Portal:Main and
+    // collected by Matthew Barsalou, http://preview.tinyurl.com/af7ur8q
+    over_here_captain = [{
+        division: "com",
+        display_division: "Command",
+        display_color: "Gold",
+        casualties: 9,
+        link: "http://en.memory-alpha.org/wiki/Command_division",
+        link_text: "Read more about this division."
+    }, {
+        division: "sci",
+        display_division: "Sciences",
+        display_color: "Blue",
+        casualties: 7,
+        link: "http://en.memory-alpha.org/wiki/Sciences_division",
+        link_text: "Read more about this division."
+    }, {
+        division: "ops",
+        display_division: "Operations",
+        display_color: "Red",
+        casualties: 24,
+        link: "http://en.memory-alpha.org/wiki/Operations_division",
+        link_text: "Read more about this division."
+    }];
+
+    // Define the size of our chart and
+    // some common layout properties
+    cDim = {
+        height: 500,
+        width: 500,
+        barMargin: 10
+    };
+
+    /*
+     *  Chart drawing block
+     *  We have to have something to label before
+     *  we can label anything.
+     */
+
+    // Let's precalculate the bar width. We can
+    // get away with this because the data set
+    // is not dynamic.
+
+    // Figure out how much space is actually available
+    // for the bars.
+    marginlessWidth = cDim.width - (cDim.barMargin * (over_here_captain.length - 1));
+    cDim.barWidth = marginlessWidth / over_here_captain.length;
+
+    // Set the height and width of our SVG element
+    svg = d3.select("svg").attr({
+        height: cDim.height,
+        width: cDim.width
+    });
+
+    // Set the height and width of our backdrop rect
+    backdrop = d3.select("#backdrop").attr({
+        x: 0,
+        y: 0,
+        height: cDim.height,
+        width: cDim.width
+    });
+
+    // Store references to our two layers.
+    // "Art" is our chart canvas and "labels,"
+    // funnily enough, is where we're going to
+    // put our labels.
+    art = d3.select("#art");
+    labels = d3.select("#labels");
+
+
+
+    // Let's make a scale so the bar data fills the chart space.
+    // First, we need to get the maximum value of our data set
+    maxHeight = d3.max(over_here_captain, function (d, i) {
+        return d.casualties
+    });
+
+    // Now make the scale function.
+    barHeight = d3.scale.linear()
+            .domain([0, maxHeight])
+            .range([0, cDim.height]);
+
+    // Join our data to the rectangles
+    bars = art.selectAll("rect").data(over_here_captain);
+
+    bars.enter().append("rect")
+            .attr("width", function (d, i) {
+                return cDim.barWidth
+            })
+            .attr("height", function (d, i) {
+                return barHeight(d.casualties)
+            })
+            .attr("y", function (d, i) {
+                return cDim.height - barHeight(d.casualties);
+            })
+            .attr("x", function (d, i) {
+                return (cDim.barWidth + cDim.barMargin) * i;
+            })
+            .attr("class", function (d) {
+                return "bar " + d.division;
+            });
+
+    /*
+     *  Label drawing block
+     *  Place some simple labels
+     */
+
+    textNodes = labels.selectAll("text").data(over_here_captain);
+
+    textNodes.enter().append("text")
+            .attr("class", "label")
+            .attr("x", function (d, i) {
+                return ((cDim.barWidth + cDim.barMargin) * i) + (cDim.barWidth / 2);
+            })
+            .attr("y", function (d, i) {
+                return cDim.height - barHeight(d.casualties) + 8;
+            })
+            .text(function (d, i) {
+                return d.display_division
+            });
+
+    /*
+     * Attach a context menu to a D3 element
+     */
+
+    contextMenuShowing = false;
+
+    d3.select("body").on('contextmenu',function (d,i) {
+        if(contextMenuShowing) {
+            d3.event.preventDefault();
+            d3.select(".popup").remove();
+            contextMenuShowing = false;
+        } else {
+            d3_target = d3.select(d3.event.target);
+            if (d3_target.classed("bar")) {
+                d3.event.preventDefault();
+                contextMenuShowing = true;
+                d = d3_target.datum();
+                // Build the popup
+
+                canvas = d3.select(".canvas");
+                mousePosition = d3.mouse(canvas.node());
+
+                popup = canvas.append("div")
+                        .attr("class", "popup")
+                        .style("left", mousePosition[0] + "px")
+                        .style("top", mousePosition[1] + "px");
+                popup.append("h2").text(d.display_division);
+                popup.append("p").text(
+                                "The " + d.display_division + " division (wearing " + d.display_color + " uniforms) had " + d.casualties + " casualties during the show's original run.")
+                popup.append("p")
+                        .append("a")
+                        .attr("href",d.link)
+                        .text(d.link_text);
+
+                canvasSize = [
+                    canvas.node().offsetWidth,
+                    canvas.node().offsetHeight
+                ];
+
+                popupSize = [
+                    popup.node().offsetWidth,
+                    popup.node().offsetHeight
+                ];
+
+                if (popupSize[0] + mousePosition[0] > canvasSize[0]) {
+                    popup.style("left","auto");
+                    popup.style("right",0);
+                }
+
+                if (popupSize[1] + mousePosition[1] > canvasSize[1]) {
+                    popup.style("top","auto");
+                    popup.style("bottom",0);
+                }
+            }
+        }
+    });
+
+</script>

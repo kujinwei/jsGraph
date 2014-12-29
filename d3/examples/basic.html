@@ -1,0 +1,67 @@
+<script type="text/javascript" src="../lib/d3.min.js"></script>
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="gantt" width="500" height="500">
+    <g class="svg_group">
+        <text>1</text>
+        <line>1</line>
+    </g>
+    <g class="svg_group">
+        <text>2</text>
+        <line>2</line>
+        <rect x="3cm" y="1cm" width="1cm" height="1cm"/>
+    </g>
+    <g class="svg_group">
+        <text>3</text>
+        <line>3</line>
+    </g>
+    <g class="svg_group">
+        <text>4</text>
+        <line>4</line>
+    </g>
+    <g class="svg_group">
+        <text>5</text>
+        <line>5</line>
+    </g>
+</svg>
+
+<script>
+    var data = ["1", "2", "3", "4", "5"];
+    var circleA = [
+        [50,48],[106,35],[107,42],[119,52],[139,58],
+        [26,60],[65,68],[117,73],[123,70],[145,78]
+    ];
+
+    var div = d3.select("body").append("div")
+            .attr('pointer-events', 'none')
+            .attr("class", "tooltip")
+            .style("opacity", 1)
+            .html("FIRST LINE <br> SECOND LINE")
+            .style("left", (50 + "px"))
+            .style("top", (30 + "px"));
+
+    var group = d3.selectAll("svg_group")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("class", 'svg_group');
+
+    group.append("text")
+            .text( function(d) { return d; } );
+
+
+    var svg = d3.select("body")
+            .append("svg")
+            .attr("width", 800)
+            .attr("height", 600);
+
+
+    svg.selectAll("circle")
+            .data(circleA)
+            .enter()
+            .append("circle")
+//            .attr("cx", function(d) { return xScale(d[0]); })
+//            .attr("cy", function(d) { return yScale(d[1]); })
+            .attr("r", 10);
+
+
+</script>

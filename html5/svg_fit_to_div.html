@@ -1,0 +1,38 @@
+<html>
+<style>
+    #wrapper {
+        position:relative; width:100px; height:400px;
+        border:3px solid green;
+        margin:0 auto
+    }
+    svg {
+        position:absolute;
+        background:yellow
+    }
+    ellipse { fill:red; stroke:black; stroke-width:2px }
+    circle { fill:orange}
+
+</style>
+<script src="jquery-1.8.3.js"></script>
+<body>
+<div id="wrapper" class="size1">
+    <svg xmlns="http://www.w3.org/2000/svg"
+         viewBox="72 -57 202 118">
+        <!-- The viewbox keeps an extra pixel beyond
+             all sides of the ellipse to account for
+             the 2px centered stroke -->
+        <ellipse cx="173" cy="2" rx="100" ry="58" />
+        <circle cx="72"  cy="-57" r="2" />
+        <circle cx="72"  cy="61"  r="2" />
+        <circle cx="274" cy="-57" r="2" />
+        <circle cx="274" cy="61"  r="2" />
+    </svg>
+</div>
+<script>
+    $('#wrapper').animate({width:550},5000,function(){
+        $(this).animate({height:100},5000);
+    });
+</script>
+</body>
+</html>
+

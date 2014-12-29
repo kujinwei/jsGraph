@@ -1,0 +1,91 @@
+<link href="style.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="../lib/d3.min.js"></script>
+
+<body>
+
+
+</body>
+
+
+<script>
+    var w = 400,
+            h = 300,
+            margin = 50;
+
+    var addBtn = d3.select('body').append('div').append('button')
+            .text('Add Circle')
+            .on('click', function () {
+                addCircles(1);
+            });
+
+    // CREATE THE SVG
+    var svg = d3.select('body').append('svg')
+            .attr('width', 900)
+            .attr('height', 400)
+            .attr("style", "outline: thin solid red;")
+            .append('g')
+            .attr('transform', 'translate(' + margin + ',' + margin + ')');
+
+    //// CREATE THE GROUP
+    var theGroup = svg.append('g')
+            .attr('class', 'the-group')
+            .attr('width', 300)
+            .attr('height', 200)
+            .attr("style", "outline: thin solid green;");
+    //
+    //// CREATE ITS BOUNDING RECT
+//    var theRect = theGroup.append('rect')
+//            .attr('class', 'bounding-rect');
+    //
+    //// INITIALIZE WITH A FEW CIRCLES
+    addCircles(4);
+    updateRect();
+    //
+    //
+    function updateRect() {
+        // SELECT ALL CHILD NODES EXCEPT THE BOUNDING RECT
+        var allChildNodes = theGroup.selectAll(':not(.bounding-rect)')[0];
+
+        // `x` AND `y` ARE SIMPLY THE MIN VALUES OF ALL CHILD BBOXES
+        var x = d3.min(allChildNodes, function (d) {
+                    return d.getBBox().x;
+                }),
+                y = d3.min(allChildNodes, function (d) {
+                    return d.getBBox().y;
+                }),
+
+        // WIDTH AND HEIGHT REQUIRE A BIT OF CALCULATION
+                width = d3.max(allChildNodes, function (d) {
+                    var bb = d.getBBox();
+                    return (bb.x + bb.width) - x;
+                }),
+
+                height = d3.max(allChildNodes, function (d) {
+                    var bb = d.getBBox();
+                    return (bb.y + bb.height) - y;
+                });
+
+        //UPDATE THE ATTRS FOR THE RECT
+//        theRect.transition().duration(1000)
+//                .attr('x', x)
+//                .attr('y', y)
+//                .attr('width', width)
+//                .attr('height', height);
+    }
+    //
+    function addCircles(n) {
+        for (var i = 0; i < n; i++) {
+            theGroup.append('circle')
+                    .attr('class', 'dot')
+                    .attr('cx', Math.random() * w)
+                    .attr('cy', Math.random() * h)
+                    .attr('r', Math.random() * 20 + 4)
+                    .on('click', function () {
+                        d3.select(this).remove();
+                        updateRect();
+                    });
+        }
+        updateRect();
+    }
+</script>
+

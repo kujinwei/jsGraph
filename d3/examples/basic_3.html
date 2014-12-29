@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<script src="../lib/d3.min.js"></script>
+
+<script>
+var data = [{ "label": "chocolate", "text": "Chocolate Cookie", "img": "../images/Hardware-Fax-icon.png" },
+{ "label": "sugar", "text": "Sugar Cookie", "img": "sugar.jpg" }];
+
+var diventer = d3.select("body").selectAll("div")
+.data(data)
+.enter().append("div")
+.attr("id", function(d) { return d.label; });
+
+diventer.append("p")
+.text(function(d) { return d.text; });
+
+diventer.append("img")
+.attr("src", function(d) { return d.img; });
+
+</script>
+
+</body>

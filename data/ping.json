@@ -1,0 +1,39 @@
+{"data": {
+    "23.246.200.49": [
+        {
+            "vlan": "887",
+            "result": "unpingable"
+        },
+        {
+            "vlan": "890",
+            "result": "pingable"
+        },
+        {
+            "vlan": "857",
+            "result": "unpingable"
+        },
+        {
+            "vlan": "1359",
+            "result": "pingable"
+        }
+    ],
+    "184.173.84.231": [
+        {
+            "vlan": "1407",
+            "result": "unpingable"
+        },
+        {
+            "vlan": "1359",
+            "result": "pingable"
+        },
+        {
+            "vlan": "1407",
+            "result": "unpingable"
+        },
+        {
+            "vlan": "1359",
+            "result": "pingable"
+        }
+    ]
+}}
+
