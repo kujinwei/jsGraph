@@ -1,0 +1,41 @@
+<link href="style.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="../lib/d3.v3.js"></script>
+<script type="text/javascript" src="../lib/date.js"></script>
+
+<body>
+	<script>
+		var x = d3.time.scale().range([0, 100]);
+		var now = new Date() ;
+		var lastDay = new Date().addDays(-7) ;
+		x.domain([lastDay, now]);
+		
+		var customTimeFormat = d3.time.format.multi([
+		  [".%L", function(d) { return d.getMilliseconds(); }],
+		  [":%S", function(d) { return d.getSeconds(); }],
+		  ["%I:%M", function(d) { return d.getMinutes(); }],
+		  ["%I %p", function(d) { return d.getHours(); }],
+		  ["%a %d", function(d) { return d.getDay() && d.getDate() != 1; }],
+		  ["%b %d", function(d) { return d.getDate() != 1; }],
+		  ["%B", function(d) { return d.getMonth(); }],
+		  ["%Y", function() { return true; }]
+		]);
+
+		console.log(x(new Date().addDays(-3) )) ;
+		
+		var ticks = x.ticks(10) ;
+		console.log(ticks) ;
+		
+		// var fx = x.tickFormat(10 , "%b %d") ;
+		var fx = x.tickFormat(customTimeFormat) ;
+		fx = x.tickFormat(d3.time.format("%Y-%m-%d"));
+		
+		
+		ticks.forEach(function(tick){
+			console.log("v=" , fx(tick)) ;
+			console.log(d3.time.format("%Y-%m-%d")(tick)) ;	
+		}) ;
+		
+		
+	</script>
+	
+</body>

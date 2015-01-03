@@ -22,6 +22,7 @@ TimeLineChart = function (container, options, data) {
     this.options.drawLine = options.drawLine || true ;
     this.options.showFocus = options.showFocus || false ;
 
+	this.tip = null ;
     this.padding = {
         "top": this.options.title ? 40 : 20,
         "right": 30,
@@ -75,10 +76,10 @@ TimeLineChart = function (container, options, data) {
         .attr("width", this.size.width)
         .attr("height", this.size.height)
         .style("fill", "#EEEEEE")
-        .attr("pointer-events", "all")
+        // .attr("pointer-events", "all")
         .on("mousedown.drag", self.plot_drag())
         .on("touchstart.drag", self.plot_drag())
-    this.plot.call(d3.behavior.zoom().x(this.x).y(this.y).on("zoom", this.redraw()));
+    // this.plot.call(d3.behavior.zoom().x(this.x).y(this.y).on("zoom", this.redraw()));
 
     this.vis.append("svg")
         .attr("top", 0)
@@ -126,8 +127,19 @@ TimeLineChart = function (container, options, data) {
             .attr("y", self.y(1))
             .attr("height", self.y(0)-self.y(1))
             .attr("width", self.x(d.endTime) - self.x(d.startTime))
-            .style("stroke", "red")
-            .style("stroke-width", 1);
+            // .style("stroke", "red")
+            .style("fill", "#00FF0E")
+            .style("stroke-width", 1)
+            .on("click" , function(){
+            	console.log("click me") ;
+            })
+            .on("mouseover", function() { 
+            	// console.log("over") ; 
+            	self.showTip("n" , d.startTime); 
+            })
+            .on("mouseout", function() {
+            	self.hideTip(); 
+            });
 
     }) ;
 
@@ -136,11 +148,11 @@ TimeLineChart = function (container, options, data) {
     var capture = this.vis.append("rect")
         .attr("width", self.size.width)
         .attr("height", self.size.height)
-        .style("fill", "none")
-        .style("pointer-events", "all")
-        .on("mousedown.drag", self.plot_drag())
-        .on("touchstart.drag", self.plot_drag())
-        .call(d3.behavior.zoom().x(this.x).y(this.y).on("zoom", this.redraw()));
+        .style("fill", "none") ;
+        // .style("pointer-events", "all")
+        // .on("mousedown.drag", self.plot_drag())
+        // .on("touchstart.drag", self.plot_drag())
+        // .call(d3.behavior.zoom().x(this.x).y(this.y).on("zoom", this.redraw()));
 
     if (options.showFocus) {
         this.focus = this.drawFocus() ;
@@ -179,11 +191,11 @@ TimeLineChart = function (container, options, data) {
             .attr("transform", "translate(" + -40 + " " + this.size.height / 2 + ") rotate(-90)");
     }
 
-    this.chart
-        .on("mousemove.drag", self.mousemove())
-        .on("touchmove.drag", self.mousemove())
-        .on("mouseup.drag", self.mouseup())
-        .on("touchend.drag", self.mouseup());
+    // this.chart
+        // .on("mousemove.drag", self.mousemove())
+        // .on("touchmove.drag", self.mousemove())
+        // .on("mouseup.drag", self.mouseup())
+        // .on("touchend.drag", self.mouseup());
 
     this.redraw()();
 };
@@ -191,6 +203,29 @@ TimeLineChart = function (container, options, data) {
 //
 // TimeLineChart methods
 //
+
+TimeLineChart.prototype.showTip = function(direction, msg) {
+	if (this.tip == null) {
+		this.tip = d3.tip().attr('class', 'd3-tip').direction(direction).offset(function() {
+			if (direction == 'n') {
+				return [-10, 0]
+			} else if (direction == 's') {
+				return [10, 0]
+			} else if (direction == 'e') {
+				return [0, 10]
+			} else if (direction == 'w') {
+				return [0, -10]
+			}
+		});
+		this.vis.call(this.tip);
+	}
+	this.tip.html(msg);
+	this.tip.show();
+};
+
+TimeLineChart.prototype.hideTip = function() {
+	this.tip.hide();
+};
 
 TimeLineChart.prototype.plot_drag = function () {
     var self = this;
@@ -470,7 +505,9 @@ TimeLineChart.prototype.onfocus = function(point) {
 } ;
 
 TimeLineChart.prototype.redraw = function () {
+	// console.log("redraw") ;
     var self = this;
+    var formatDate = d3.time.format("%b %d") ;
     return function () {
         var tx = function (d) {
                 return "translate(" + self.x(d) + ",0)";
@@ -481,8 +518,8 @@ TimeLineChart.prototype.redraw = function () {
             stroke = function (d) {
                 return d ? "#ccc" : "#666";
             },
-            fx = self.x.tickFormat(10),
-            fy = self.y.tickFormat(10);
+            fx = self.x.tickFormat(5),
+            fy = self.y.tickFormat(5);
 
 
 // Regenerate x-ticks…
@@ -490,8 +527,14 @@ TimeLineChart.prototype.redraw = function () {
             .data(self.x.ticks(10), String)
             .attr("transform", tx);
 
-        gx.select("text")
-            .text(fx);
+        // gx.select("text")
+            // .text(fx);
+            
+        // gx.select("text")
+            // .text(function(d){
+            	// console.log(fx(d)) ;
+            	// return fx(d) ;
+            	// });
 
         var gxe = gx.enter().insert("g", "a")
             .attr("class", "x")
@@ -508,7 +551,8 @@ TimeLineChart.prototype.redraw = function () {
             .attr("y", self.size.height)
             .attr("dy", "1em")
             .attr("text-anchor", "middle")
-            .text(fx)
+            // .text(fx)
+            .text(function(d){return formatDate(d);})
             .style("cursor", "ew-resize")
             .on("mouseover", function (d) {
                 d3.select(this).style("font-weight", "bold");

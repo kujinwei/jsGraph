@@ -453,7 +453,8 @@ var loadInstanceHistoryData = function(instanceIP) {
 				'value' : 1
 			});
 		}
-		drawTimeChart(instanceIP, []);
+		// drawTimeChart(instanceIP, []);
+		drawTimeChart(instanceIP, lineData);
 
 	} else {
 		showLoading();
